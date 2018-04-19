@@ -21,7 +21,7 @@ static const unsigned accZ_t = 0;
 void setup() {
 
   MIDI.begin(MIDI_CHANNEL_OMNI);
-  Serial.begin(9600);
+  Serial.begin(115200);
 
   //Set up analog input pins
   pinMode(flex1, INPUT);
@@ -43,27 +43,26 @@ void loop() {
   int flex1val = (analogRead(flex1)*flex_const-1.43)*(127/(2.31-1.43));
   if(flex1val>127){flex1val=127;}
   else if(flex1val<0){flex1val=0;}
-
-  float acc_x = analogRead(A0);
-  Serial.print("X = ");
-  Serial.println(acc_x);
-  float acc_y = analogRead(A1);
-  float acc_z = analogRead(A2);
- 
- scaleVelocity(acc_x, acc_y, acc_z);
-/*
-  int flex2val = floor(analogRead(flex2)*flex_const);
-  int flex3val = floor(analogRead(flex3)*flex_const);
-  
-  int accXval = analogRead(accX)*127/(1.95-1.63);
-  int accYval = analogRead(accY)*127/(1.93-1.29);
-  int accZval = analogRead(accZ)*127/(1.92-1.29);
-
   MIDI.sendControlChange(31, flex1val, 1); //Brightness - Flex1
-  MIDI.sendControlChange(32, 0.5, 1); //Decay - Flex2
-  MIDI.sendControlChange(34, 0.5, 1); //Feedback - Flex3
-  MIDI.sendControlChange(35, 0.5, 1); //Level - Acc1
-  MIDI.sendControlChange(33, 0.5, 1); //Delay - Acc2
+
+//  float acc_x = analogRead(A0);
+  //Serial.print("X = ");
+  //Serial.println(acc_x);
+ // float acc_y = analogRead(A1);
+ // float acc_z = analogRead(A2);
+ //scaleVelocity(acc_x, acc_y, acc_z);
+
+//  int flex2val = floor(analogRead(flex2)*flex_const);
+//  int flex3val = floor(analogRead(flex3)*flex_const);
+  
+ // int accXval = analogRead(accX)*127/(1.95-1.63);
+ // int accYval = analogRead(accY)*127/(1.93-1.29);
+ // int accZval = analogRead(accZ)*127/(1.92-1.29);
+
+//  MIDI.sendControlChange(32, 0.5, 1); //Decay - Flex2
+ // MIDI.sendControlChange(34, 0.5, 1); //Feedback - Flex3
+ // MIDI.sendControlChange(35, 0.5, 1); //Level - Acc1
+ // MIDI.sendControlChange(33, 0.5, 1); //Delay - Acc2
 */
   /*print sensor vallue to Serial Monitor, TO BE USED FOR DEBUGGING TO FIND THRESHOLD VALUES
   Serial.print("X= ");
