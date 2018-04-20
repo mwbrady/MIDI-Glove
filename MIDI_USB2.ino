@@ -18,6 +18,12 @@ static const unsigned accX_t = 0;
 static const unsigned accY_t = 0;
 static const unsigned accZ_t = 0;
 
+int bend1prev = 0;
+int bend2prev = 0;
+int bend3prev = 0; 
+int rollPrev = 0;
+int pitchPrev = 0;
+
 void setup() {
   MIDI.begin(MIDI_CHANNEL_OMNI);
   Serial.begin(115200);
@@ -29,12 +35,6 @@ void setup() {
   pinMode(accX, INPUT);
   pinMode(accY, INPUT);
   pinMode(accZ, INPUT);
-
-  int bend1prev = 0;
-  int bend2prev = 0;
-  int bend3prev = 0; 
-  int rollPrev = 0;
-  int pitchPrev = 0;
 }
 
 void loop() {
@@ -91,7 +91,7 @@ bool tapCheck(float acc_z){
 }
 
 //scale accelerometer inputs
-void scaleVelocity(int accel){
+int scaleVelocity(int accel){
   int velocity = float((float((accel-285))/float((430-285))))*127;
   velocity = velocity + 30;
   if (velocity < 0){
