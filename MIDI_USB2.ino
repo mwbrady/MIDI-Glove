@@ -10,19 +10,12 @@ static const unsigned accX = A1;
 static const unsigned accY = A4;
 static const unsigned accZ = A5;
 
-//Set analog sensor threshold values to trigger a MIDI event; TO BE FILLED IN UPON TESTING
-static const unsigned flex1_t = 0;
-static const unsigned flex2_t = 0;
-static const unsigned flex3_t = 0;
-static const unsigned accX_t = 0;
-static const unsigned accY_t = 0;
-static const unsigned accZ_t = 0;
-
 int bend1prev = 0;
 int bend2prev = 0;
 int bend3prev = 0; 
 int rollPrev = 0;
 int pitchPrev = 0;
+int zPrev = 0;
 
 void setup() {
   MIDI.begin(MIDI_CHANNEL_OMNI);
@@ -38,7 +31,8 @@ void setup() {
 }
 
 void loop() {
-
+  //read and scale flex sensors and map to Midi notes
+  //Must see a change in value of 5 to trigger
   int BEND1 = analogRead(flex1);
   int BEND2 = analogRead(flex2);
   int BEND3 = analogRead(flex3);
@@ -58,14 +52,15 @@ void loop() {
   MIDI.sendNoteOn(72, bend3, 3);
   bend3prev = bend3;
   }
-  
+
+  //read and scale x and y axis accel
   float acc_x = analogRead(accX);
   float acc_y = analogRead(accY);
-  float acc_z = analogRead(accZ);
   int roll = scaleVelocity(acc_x);
   int pitch = scaleVelocity(acc_y);
-  bool z_tap = tapCheck(acc_z);
 
+  
+  
   if(abs(pitchPrev - pitch) > 10){
   MIDI.sendNoteOn(73, pitch, 4); 
   pitchPrev = pitch;
@@ -75,6 +70,19 @@ void loop() {
   MIDI.sendNoteOn(74, roll, 5); 
   rollPrev = roll;
   }
+
+  /*//check if tapped
+  bool tapped = tapCheck();
+  //pause program and wait until tapped again
+  if(tapped){
+    tapped = false;
+    while(!tapped){
+      tapped = tapCheck();
+      delay(1);
+    }
+    tapped = false;
+    delay(1000);
+  }*/
   
   delay(1);
 }
@@ -90,9 +98,15 @@ int getFlexVal(int flexNum){
 }
 
 //set threshold value for a tap to register
-bool tapCheck(float acc_z){
-  if(acc_z > 50)
+bool tapCheck(){
+  float acc_z = analogRead(accZ);
+  int z = scaleVelocity(acc_z);
+  if(abs(zPrev - z) > 45){
+    zPrev = z;
     return true;
+  }
+  zPrev = z;
+  return false; 
 }
 
 //scale accelerometer inputs
