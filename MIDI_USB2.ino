@@ -1,4 +1,5 @@
 #include <MIDI.h>
+#include <SoftwareSerial.h>
 
 MIDI_CREATE_DEFAULT_INSTANCE();
 
@@ -17,9 +18,15 @@ int rollPrev = 0;
 int pitchPrev = 0;
 int zPrev = 0;
 
+int bluetoothTx = 2;  // TX-O 
+int bluetoothRx = 3;  // RX-I pin
+
+SoftwareSerial bluetooth(bluetoothTx, bluetoothRx);
+
 void setup() {
   MIDI.begin(MIDI_CHANNEL_OMNI);
-  Serial.begin(115200);
+  Serial.begin(9600);
+  bluetooth.begin(9600);
 
   //Set up analog input pins
   pinMode(flex1, INPUT);
@@ -58,8 +65,6 @@ void loop() {
   float acc_y = analogRead(accY);
   int roll = scaleVelocity(acc_x);
   int pitch = scaleVelocity(acc_y);
-
-  
   
   if(abs(pitchPrev - pitch) > 10){
   MIDI.sendNoteOn(73, pitch, 4); 
@@ -84,7 +89,12 @@ void loop() {
     delay(1000);
   }*/
   
-  delay(1);
+  delay(2);
+  if(Serial.available())  // If stuff (MIDI.sendNoteOn() values) is typed in the serial monitor
+  {
+    // Send any binary data the Serial monitor prints to the bluetooth
+    bluetooth.print(Serial.read());
+  }
 }
 
   
