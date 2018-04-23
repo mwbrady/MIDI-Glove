@@ -39,22 +39,25 @@ void setup() {
 
 void loop() {
 
-  int bend1 = getFlexVal(1);
-  int bend2 = getFlexVal(2);
-  int bend3 = getFlexVal(3);
+  int BEND1 = analogRead(flex1);
+  int BEND2 = analogRead(flex2);
+  int BEND3 = analogRead(flex3);
+  int bend1 = getFlexVal(BEND1);
+  int bend2 = getFlexVal(BEND2);
+  int bend3 = getFlexVal(BEND3);
 
-  if((bend1prev - bend1) > 10){
-  MIDI.sendNoteOn(72, bend1, 1); //or this- sendControlChange(31, flex1val, 1); //Brightness - Flex1
-  }
-  if((bend2prev - bend2) > 10){
-  MIDI.sendNoteOn(72, bend1, 2); 
-  }
-  if((bend3prev - bend3) > 10){
-  MIDI.sendNoteOn(72, bend3, 3);
-  }
+  if(abs(bend1prev - bend1) > 5){
+  MIDI.sendNoteOn(70, bend1, 1); //or this- sendControlChange(31, flex1val, 1); //Brightness - Flex1
   bend1prev = bend1;
+  }
+  if(abs(bend2prev - bend2) > 5){
+  MIDI.sendNoteOn(71, bend2, 2); 
   bend2prev = bend2;
+  }
+  if(abs(bend3prev - bend3) > 5){
+  MIDI.sendNoteOn(72, bend3, 3);
   bend3prev = bend3;
+  }
   
   float acc_x = analogRead(accX);
   float acc_y = analogRead(accY);
@@ -63,21 +66,23 @@ void loop() {
   int pitch = scaleVelocity(acc_y);
   bool z_tap = tapCheck(acc_z);
 
-  if((pitchPrev - pitch) > 8){
-  MIDI.sendNoteOn(72, pitch, 4); 
-  }
-  if((rollPrev - roll) > 8){
-  MIDI.sendNoteOn(72, roll, 5); 
-  }
+  if(abs(pitchPrev - pitch) > 10){
+  MIDI.sendNoteOn(73, pitch, 4); 
   pitchPrev = pitch;
+  }
+  
+  if(abs(rollPrev - roll) > 10){
+  MIDI.sendNoteOn(74, roll, 5); 
   rollPrev = roll;
+  }
+  
   delay(1);
 }
 
   
 //scale flex sensor inputs
 int getFlexVal(int flexNum){
-  int flexval = (float((float((analogRead(flexNum))/float(1024))*127))-30)*8;
+  int flexval = (float((float((flexNum)/float(1024))*127))-30)*8;
   flexval = abs(flexval-127);
   if(flexval>127){flexval=127;}
   else if(flexval<0){flexval=0;}
